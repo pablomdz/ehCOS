@@ -7,6 +7,7 @@
   tasks:
   - name: Ejecutar comando
     become_user: adminsalud
+    become_method: runas
     win_command: powershell.exe  Get-Service -Displayname "*tomcat*"
     register: display_output
   - name: Mostrar salida del comando
