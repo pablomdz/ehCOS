@@ -6,6 +6,7 @@
   # servicio: "Tomcat"
   tasks:
   - name: Ejecutar comando
+    become_user: adminsalud
     win_command: powershell.exe  Get-Service -Displayname "*tomcat*"
     register: display_output
   - name: Mostrar salida del comando
