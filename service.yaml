@@ -1,6 +1,6 @@
 ---
 - name: Verificar estado
-  hosts: nobilis
+  hosts: all
   vars:
   # servicio: "Tomcat"
   tasks:
