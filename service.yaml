@@ -1,6 +1,7 @@
 ---
 - name: Verificar estado
   hosts: all
+  become: yes
   vars:
   # servicio: "Tomcat"
   tasks:
