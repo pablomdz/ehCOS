@@ -1,0 +1,11 @@
+---
+- name: Reiniciar Servidor
+  hosts: all
+  vars:
+  tasks:
+  - name: Ejecutar comando reinicio
+    win_command: powershell.exe  Restart-Computer -Force
+    register: display_output
+  - name: Mostrar salida del comando
+    debug:
+      var: display_output.stdout_lines
