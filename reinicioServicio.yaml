@@ -2,30 +2,10 @@
   hosts: all
 
   tasks:
-    - name: Obtener nombre del servicio Tomcat
-      win_shell: Get-Service | Where-Object { $_.DisplayName -like "*tomcat*" } | Select-Object -ExpandProperty DisplayName
+    - name: Ejecutar reinicio
+      win_shell: Get-Service -DisplayName "*tomcat*" | Stop-Service -force; Get-Service -DisplayName "*tomcat*" | Start-Service
       register: tomcat_service_name
 
-    - name: Mostrar nombre del servicio Tomcat
+    - name: Mostrar el resultado servicio Tomcat
       debug:
         var: tomcat_service_name.stdout
-
-    - name: Detener servicio Tomcat
-      win_service:
-        name: "{{ tomcat_service_name.stdout }}"
-        state: stopped
-      register: stopped_service
-
-    - name: Mostrar salida al detener servicio Tomcat
-      debug:
-        var: stopped_service
-
-    - name: Iniciar servicio Tomcat
-      win_service:
-        name: "{{ tomcat_service_name.stdout }}"
-        state: started
-      register: started_service
-
-    - name: Mostrar salida al iniciar servicio Tomcat
-      debug:
-        var: started_service
