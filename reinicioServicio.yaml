@@ -3,7 +3,7 @@
 
   tasks:
     - name: Obtener nombre del servicio Tomcat
-      win_shell: Get-Service | Where-Object { $_.DisplayName -like "*tomcat*" } | Select-Object -ExpandProperty ServiceName
+      win_shell: Get-Service | Where-Object { $_.DisplayName -like "*tomcat*" } | Select-Object -ExpandProperty DisplayName
       register: tomcat_service_name
 
     - name: Mostrar nombre del servicio Tomcat
