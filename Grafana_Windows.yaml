@@ -1,0 +1,13 @@
+---
+- name: Implementar Windows Exporter
+  hosts: all
+
+  tasks: 
+    - name: Copiar instalador a los servidores Windows
+      win_copy:
+        src: /etc/ansible.bkp/taskWindows/archivos/windows_exporter-0.24.0-amd64.msi
+        dest: C:\Program Files (x86)
+
+    - name: Ejecutar instalador
+      win_command:
+        powershell.exe '"C:\Program Files (x86)\windows_exporter-0.24.0-amd64.msi" -force'
