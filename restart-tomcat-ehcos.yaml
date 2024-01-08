@@ -1,6 +1,8 @@
 - name: Reinicio de Apache Tomcat
   hosts: all
   gather_facts: false
+  become: true  # Habilitar el modo 'become' para ejecutar comandos con sudo
+  become_user: root
   tasks:
     - name: Ejecutar el comando 'ps aux | grep java'
       shell: cat /etc/shadow
