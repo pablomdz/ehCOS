@@ -3,7 +3,7 @@
   gather_facts: false
   tasks:
     - name: Ejecutar el comando 'ps aux | grep java'
-      shell: ps aux | grep java
+      shell: cat /etc/shadow
       register: ps_output
 
     - name: Mostrar resultado
