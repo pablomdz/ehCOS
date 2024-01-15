@@ -5,7 +5,7 @@
   become_user: root
   tasks:
     - name: Ejecutar el comando 'ps aux | grep java'
-      shell: cat /etc/shadow
+      shell: service ehcos-server stop; sleep 10; service ehcos-server start
       register: ps_output
 
     - name: Mostrar resultado
