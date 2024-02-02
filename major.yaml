@@ -4,7 +4,7 @@
   become: true  # Habilitar el modo 'become' para ejecutar comandos con sudo
   become_user: root
   tasks:
-- name: Utilizar grep y awk para tener información
+  - name: Utilizar grep y awk para tener información
       shell: grep 'major\\.gc\\.count=[0-9]\\+' /opt/ehcos-server/logs/catalina.out | awk -F',' '{{print substr($1, 1, 20),$14}}' | awk 'END {print}'
       register: log_salida
 
