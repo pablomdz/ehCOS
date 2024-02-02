@@ -1,0 +1,7 @@
+---
+- name: Sacar major.gc.count de catalina.out
+  gather_facts: false
+  tasks:
+    - name: Utilizar grep y awk para tener información
+      command: "grep 'major\\.gc\\.count=[0-9]\\+' /opt/ehcos-server/logs/catalina.out | awk -F',' '{{print substr($1, 1, 20),$14}}' | awk 'END {print}'"
+      register: log_salida
