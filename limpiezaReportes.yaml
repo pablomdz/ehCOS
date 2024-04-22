@@ -5,7 +5,7 @@
   become_user: root
   tasks:
     - name: Ejecucion de SCRIPT PYTHON
-      shell: python3 /var/shared/scripts/borardo.py
+      shell: python3 /var/shared/scripts/borardo.py > /var/shared/scripts/logs-borrado-nfs.log
 
       register: log_salida
 
