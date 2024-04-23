@@ -5,7 +5,9 @@
   # servicio: "Tomcat"
   tasks:
   - name: Ejecutar comando
-    win_command: powershell.exe  Get-Service -Displayname "*tomcat*"
+    #win_command: powershell.exe  Get-Service -Displayname "*tomcat*"
+    win_command: powershell.exe (Get-Service -DisplayName "*tomcat*" | ForEach-Object { Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\$($_.Name)" }).Description
+
     register: display_output
   - name: Mostrar salida del comando
     debug:
