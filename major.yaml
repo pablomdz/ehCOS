@@ -3,7 +3,18 @@
   gather_facts: false
   become: true  # Habilitar el modo 'become' para ejecutar comandos con sudo
   become_user: root
+  vars:
+       mi_variable:
+         type: choice
+         choices:
+           - opcion1
+           - opcion2
+           - opcion3
+         default: opcion1
+         description: "Selecciona una opción"
+
   tasks:
+  
     - name: Utilizar grep y awk para tener información
       #shell:  grep 'major\.gc\.count=[0-9]\+' /opt/ehcos-server/logs/catalina.out | awk -F',' '{print substr($1, 1, 20),$14}' | awk 'END {print}'
       shell:   grep 'major\.gc\.count=[0-9]\+' /opt/ehcos-server/logs/catalina.out | awk -F',' '{print substr($1, 1, 20),$14}' | awk '!/Binary file \/opt\/ehc/{last=$0} END {print last}'
@@ -14,4 +25,4 @@
       debug:
         var:  log_salida.stdout_lines
 
-
+   
