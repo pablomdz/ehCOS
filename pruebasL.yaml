@@ -3,11 +3,38 @@
   gather_facts: false
   become: true  # Habilitar el modo 'become' para ejecutar comandos con sudo
   become_user: root
+ 
+  vars:
+    opcion: ""
   tasks:
-    - name: Ejecutar el comando 'ps aux | grep java'
-      shell: cat /etc/shadow
-      register: ps_output
+    - name: Solicitar opción al usuario
+      pause:
+        prompt: "Elige una opción (1, 2 o 3):"
+      register: resultado
 
-    - name: Mostrar resultado
-      debug:
-        var: ps_output.stdout_lines
+    - name: Asignar opción seleccionada
+      set_fact:
+        opcion: "{{ resultado.user_input }}"
+
+    - name: Ejecutar acción según opción
+      block:
+        - name: Opción 1 seleccionada
+          debug:
+            msg: "Has seleccionado la opción 1"
+          when: opcion == "1"
+
+        - name: Opción 2 seleccionada
+          debug:
+            msg: "Has seleccionado la opción 2"
+          when: opcion == "2"
+
+        - name: Opción 3 seleccionada
+          debug:
+            msg: "Has seleccionado la opción 3"
+          when: opcion == "3"
+
+        - name: Opción no válida
+          debug:
+            msg: "Opción no válida, por favor elige 1, 2 o 3."
+          when: opcion not in ["1", "2", "3"]
+  
