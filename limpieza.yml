@@ -5,7 +5,7 @@
   become_user: root
   tasks:
     - name: Ejecutar HOST
-      shell: hostame
+      shell: hostname
       register: hostname_output
 
     - name: Mostrar resultado
