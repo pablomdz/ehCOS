@@ -5,7 +5,7 @@
   become_user: sysuser #root
   tasks:
     - name: Ejecutar HOST
-      shell: reboot #hostname
+      shell: sudo reboot now #hostname
       register: hostname_output
 
     - name: Mostrar resultado
