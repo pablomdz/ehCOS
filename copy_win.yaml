@@ -1,0 +1,41 @@
+---
+- name: Implementar Windows Exporter
+  hosts: all
+
+  tasks:
+    - name: 1. Asegurar que el directorio de destino exista
+      win_file:
+        path: C:\Tools\agente-apm
+        state: directory
+
+    - name: 2. Buscar el nombre de la carpeta en Apache Software Foundation
+      win_find:
+        paths: "C:\\Program Files\\Apache Software Foundation"
+        file_type: directory
+      register: apache_dir
+
+    - name: 3. Establecer nombre del Lab
+      set_fact:
+        lab_name: "{{ apache_dir.files[0].filename }}"
+      when: apache_dir.matched > 0
+
+    - name: 4. Copiar instalador
+      win_copy:
+        src: /var/lib/awx/projects/archivos/opentelemetry-javaagent.jar
+        dest: C:\Tools\agente-apm\opentelemetry-javaagent.jar
+
+    - name: 5. Crear archivo de configuración con saltos de línea correctos
+      win_copy:
+        dest: C:\Tools\agente-apm\configuracion.txt
+        content: |
+          -javaagent:"C:\Tools\agente-apm\opentelemetry-javaagent.jar"
+          -Dotel.traces.exporter=otlp
+          -Dotel.exporter.otlp.endpoint=http://10.2506.1.178:4318
+          -Dotel.exporter.otlp.protocol=http/protobuf
+          -Dotel.service.name=LIS-{{ lab_name | default('Desconocido') }}
+          -Dotel.instrumentation.jvm-metrics.enabled=true
+          -Dotel.resource.attributes=service.node.name={{ ansible_hostname }},deployment.environment.name=production
+          -Dotel.traces.sampler=traceidratio
+          -Dotel.traces.sampler.arg=0.1
+          -Dotel.logs.exporter=none
+          -Dotel.metrics.exporter=otlp
