@@ -1,11 +1,10 @@
 ---
-- name: Copiar Agente APM y Reiniciar Servidor Windows
+- name: Copiar Agente APM
   hosts: all
   gather_facts: no
   vars:
-    # Ruta absoluta dentro del contenedor awx_task
-    archivo_fuente: "/var/lib/awx/projects/_45__provincia_automatizacion/opentelemetry-javaagent.jar"
-    # Ruta de destino en el servidor Windows
+    # IMPORTANTE: Solo el nombre. Ansible busca en la carpeta 'files' por defecto
+    archivo_fuente: "opentelemetry-javaagent.jar"
     destino_windows: 'C:\Tools\agente-apm'
 
   tasks:
@@ -14,25 +13,14 @@
         path: "{{ destino_windows }}"
         state: directory
 
-    - name: 2. Copiar el archivo JAR desde el contenedor al servidor
+    - name: 2. Copiar el archivo JAR al servidor
       win_copy:
         src: "{{ archivo_fuente }}"
         dest: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
-      register: copy_result
 
-    - name: 3. Verificar la existencia y estado del archivo copiado
+    - name: 3. Verificar que el archivo existe en el destino
       win_stat:
         path: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
       register: jar_stat
 
-    - name: 4. Validar si la copia fue exitosa
-      fail:
-        msg: "Error crítico: El archivo no se encuentra en el destino de Windows."
-      when: not jar_stat.stat.exists
-
-    - name: 5. Mostrar confirmación en los logs
-      debug:
-        msg: 
-          - "Copia exitosa en: {{ inventory_hostname }}"
-          - "Tamaño del archivo: {{ jar_stat.stat.size }} bytes"
 
