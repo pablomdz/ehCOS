@@ -1,24 +1,36 @@
 ---
-- name: Preparar Agente APM y Reiniciar Servidor
+- name: Copiar Agente
   hosts: all
+  gather_facts: no
   vars:
-    # Define la ruta de origen en tu máquina Linux/Ansible
-    local_jar_path: "./opentelemetry-javaagent.jar"
-    # Define la ruta de destino en el servidor Windows
-    dest_path: 'C:\Tools\agente-apm'
+    archivo_fuente: "opentelemetry-javaagent.jar"
+    destino_windows: 'C:\Tools\agente-apm'
 
   tasks:
-    - name: Asegurar que el directorio de destino existe
+    - name: Crear carpeta de herramientas si no existe
       win_file:
-        path: "{{ dest_path }}"
+        path: "{{ destino_windows }}"
         state: directory
 
-    - name: Copiar el archivo opentelemetry-javaagent.jar al servidor
+    - name: Copiar el agente APM a la carpeta Tools
       win_copy:
-        src: "{{ local_jar_path }}"
-        dest: "{{ dest_path }}\\opentelemetry-javaagent.jar"
+        src: "{{ archivo_fuente }}"
+        dest: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
 
-    - name: Ejecutar comando reinicio
-      win_reboot:
-        msg: "Reinicio iniciado por Ansible después de actualizar el agente APM"
-        reboot_timeout: 600
+    - name: Verificar que el archivo existe en el destino
+      win_stat:
+        path: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
+      register: jar_stat
+
+    - name: Validar resultado de la copia
+      fail:
+        msg: "Error: El archivo no se copió correctamente o no existe."
+      when: not jar_stat.stat.exists
+
+    - name: Mostrar detalles del archivo copiado
+      debug:
+        msg: 
+          - "Archivo: {{ jar_stat.stat.filename }}"
+          - "Tamaño: {{ jar_stat.stat.size }} bytes"
+          - "Ruta: {{ jar_stat.stat.path }}"
+      when: jar_stat.stat.exists
