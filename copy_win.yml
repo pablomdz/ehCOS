@@ -1,6 +1,5 @@
 - name: Desplegar Agente APM a Windows
-  hosts: windows_servers  # Cambiado 'all' por un grupo específico (recomendado)
-  gather_facts: no
+  hosts: all  # Cambiado 'all' por un grupo específico (recomendado)
   vars:
     destino_windows: 'C:\Tools\agente-apm'
     # Asegúrate de que esta ruta exista en tu nodo de control (Linux)
