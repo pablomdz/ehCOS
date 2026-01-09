@@ -13,19 +13,15 @@
         path: "{{ destino_windows }}"
         state: directory
 
-    - name: 2. Copiar el agente APM al servidor
-      win_copy:
-        src: "{{ archivo_fuente }}"
-        dest: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
-      register: copy_status
+    - name: Copiar un archivo de configuración
+      ansible.windows.win_copy:
+        src: /opentelemetry-javaagent.jar  # Ruta en tu máquina de control Ansible
+        dest: C:\Tools\agente-apm # Ruta en el servidor Windows
+        # Se pueden añadir opciones como:
+        # backup: yes # Crea una copia de seguridad antes de sobrescribir
+        # force: yes # Fuerza la copia si el archivo es idéntico
+      register: copy_result
 
-    - name: 3. Verificar integridad del archivo (win_stat)
-      win_stat:
-        path: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
-        get_checksum: yes
-      register: jar_info
-
-    - name: 4. Detener si el archivo no existe
-      fail:
-        msg: "El archivo no se encontro en el servidor Windows tras la copia."
-      when: not jar_info.stat.exists
+    - name: Mostrar resultado
+      debug:
+        var: copy_result
