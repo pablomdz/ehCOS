@@ -3,10 +3,6 @@
   hosts: all
 
   tasks:
-    - name: 1. Crear directorio de destino en Windows
-      ansible.windows.win_file:
-        state: 'C:\Tools\agente-apm\'
-
     - name: 2. Copiar instalador a los servidores Windows
       win_copy:
         src: /var/lib/awx/projects/archivos/opentelemetry-javaagent.jar
