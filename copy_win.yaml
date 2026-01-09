@@ -1,21 +1,17 @@
-- name: Desplegar Agente APM a Windows
-  hosts: all  # Cambiado 'all' por un grupo específico (recomendado)
-  vars:
-    destino_windows: 'C:\Tools\agente-apm'
-    # Asegúrate de que esta ruta exista en tu nodo de control (Linux)
-    archivo_origen: 'opentelemetry-javaagent.jar' 
+---
+- name: Implementar Windows Exporter
+  hosts: all
 
   tasks:
     - name: 1. Crear directorio de destino en Windows
       ansible.windows.win_file:
-        path: "{{ destino_windows }}"
-        state: directory
+        state: C:\Tools\agente-apm\
 
-    - name: 2. Copiar agente APM
-      ansible.windows.win_copy:
-        src: "{{ archivo_origen }}"
-        dest: "{{ destino_windows }}/opentelemetry-javaagent.jar"
-        force: yes
+    - name: 2. Copiar instalador a los servidores Windows
+      win_copy:
+        src: /var/lib/awx/projects/archivos/opentelemetry-javaagent.jar
+        dest: C:\Tools\agente-apm\
+
 
     - name: 3. Mostrar resultado
       ansible.builtin.debug:
