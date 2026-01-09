@@ -1,36 +1,38 @@
 ---
-- name: Copiar Agente
+- name: Copiar Agente APM y Reiniciar Servidor Windows
   hosts: all
   gather_facts: no
   vars:
-    archivo_fuente: "opentelemetry-javaagent.jar"
+    # Ruta absoluta dentro del contenedor awx_task
+    archivo_fuente: "/var/lib/awx/projects/_45__provincia_automatizacion/opentelemetry-javaagent.jar"
+    # Ruta de destino en el servidor Windows
     destino_windows: 'C:\Tools\agente-apm'
 
   tasks:
-    - name: Crear carpeta de herramientas si no existe
+    - name: 1. Asegurar que el directorio existe en Windows
       win_file:
         path: "{{ destino_windows }}"
         state: directory
 
-    - name: Copiar el agente APM a la carpeta Tools
+    - name: 2. Copiar el archivo JAR desde el contenedor al servidor
       win_copy:
         src: "{{ archivo_fuente }}"
         dest: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
+      register: copy_result
 
-    - name: Verificar que el archivo existe en el destino
+    - name: 3. Verificar la existencia y estado del archivo copiado
       win_stat:
         path: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
       register: jar_stat
 
-    - name: Validar resultado de la copia
+    - name: 4. Validar si la copia fue exitosa
       fail:
-        msg: "Error: El archivo no se copió correctamente o no existe."
+        msg: "Error crítico: El archivo no se encuentra en el destino de Windows."
       when: not jar_stat.stat.exists
 
-    - name: Mostrar detalles del archivo copiado
+    - name: 5. Mostrar confirmación en los logs
       debug:
         msg: 
-          - "Archivo: {{ jar_stat.stat.filename }}"
-          - "Tamaño: {{ jar_stat.stat.size }} bytes"
-          - "Ruta: {{ jar_stat.stat.path }}"
-      when: jar_stat.stat.exists
+          - "Copia exitosa en: {{ inventory_hostname }}"
+          - "Tamaño del archivo: {{ jar_stat.stat.size }} bytes"
+
