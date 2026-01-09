@@ -1,0 +1,24 @@
+---
+- name: Preparar Agente APM y Reiniciar Servidor
+  hosts: all
+  vars:
+    # Define la ruta de origen en tu máquina Linux/Ansible
+    local_jar_path: "./opentelemetry-javaagent.jar"
+    # Define la ruta de destino en el servidor Windows
+    dest_path: 'C:\Tools\agente-apm'
+
+  tasks:
+    - name: Asegurar que el directorio de destino existe
+      win_file:
+        path: "{{ dest_path }}"
+        state: directory
+
+    - name: Copiar el archivo opentelemetry-javaagent.jar al servidor
+      win_copy:
+        src: "{{ local_jar_path }}"
+        dest: "{{ dest_path }}\\opentelemetry-javaagent.jar"
+
+    - name: Ejecutar comando reinicio
+      win_reboot:
+        msg: "Reinicio iniciado por Ansible después de actualizar el agente APM"
+        reboot_timeout: 600
