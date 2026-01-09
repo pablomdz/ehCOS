@@ -2,11 +2,7 @@
   hosts: all
   gather_facts: no
   vars:
-    # Como el archivo baja con el repo, usamos la ruta relativa
-    # Si lo pusiste en una carpeta llamada files, usa: "files/opentelemetry-javaagent.jar"
-    archivo_fuente: "opentelemetry-javaagent.jar"
     destino_windows: 'C:\Tools\agente-apm'
-
   tasks:
     - name: 1. Crear directorio de destino en Windows
       win_file:
