@@ -1,14 +1,37 @@
+#---
+#- name: Implementar Windows Exporter
+#  hosts: all
+#
+#  tasks:
+#    - name: 2. Copiar instalador a los servidores Windows
+#      win_copy:
+#        src: /var/lib/awx/projects/archivos/opentelemetry-javaagent.jar
+#        dest: C:\Tools\agente-apm\
+
 ---
 - name: Implementar Windows Exporter
   hosts: all
 
   tasks:
+    - name: 1. Asegurar que el directorio de destino exista
+      win_file:
+        path: C:\Tools\agente-apm
+        state: directory
+
     - name: 2. Copiar instalador a los servidores Windows
       win_copy:
         src: /var/lib/awx/projects/archivos/opentelemetry-javaagent.jar
-        dest: C:\Tools\agente-apm\
+        dest: C:\Tools\agente-apm\opentelemetry-javaagent.jar
+      register: copy_result
 
+    - name: 3. Verificar si el archivo se copio correctamente
+      win_stat:
+        path: C:\Tools\agente-apm\opentelemetry-javaagent.jar
+      register: file_info
 
-    - name: 3. Mostrar resultado
-      ansible.builtin.debug:
-        var: copy_result
+    - name: 4. Validar existencia y mostrar estado
+      assert:
+        that:
+          - file_info.stat.exists
+        fail_msg: "El archivo no se encontró en el destino después de la copia."
+        success_msg: "El archivo se copió y verificó exitosamente."
