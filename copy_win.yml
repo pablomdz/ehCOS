@@ -1,26 +1,31 @@
----
-- name: Copiar Agente APM
+- name: Desplegar Agente APM desde Git a Windows
   hosts: all
   gather_facts: no
   vars:
-    # IMPORTANTE: Solo el nombre. Ansible busca en la carpeta 'files' por defecto
+    # Como el archivo baja con el repo, usamos la ruta relativa
+    # Si lo pusiste en una carpeta llamada files, usa: "files/opentelemetry-javaagent.jar"
     archivo_fuente: "opentelemetry-javaagent.jar"
     destino_windows: 'C:\Tools\agente-apm'
 
   tasks:
-    - name: 1. Asegurar que el directorio existe en Windows
+    - name: 1. Crear directorio de destino en Windows
       win_file:
         path: "{{ destino_windows }}"
         state: directory
 
-    - name: 2. Copiar el archivo JAR al servidor
+    - name: 2. Copiar el agente APM al servidor
       win_copy:
         src: "{{ archivo_fuente }}"
         dest: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
+      register: copy_status
 
-    - name: 3. Verificar que el archivo existe en el destino
+    - name: 3. Verificar integridad del archivo (win_stat)
       win_stat:
         path: "{{ destino_windows }}\\opentelemetry-javaagent.jar"
-      register: jar_stat
+        get_checksum: yes
+      register: jar_info
 
-
+    - name: 4. Detener si el archivo no existe
+      fail:
+        msg: "El archivo no se encontro en el servidor Windows tras la copia."
+      when: not jar_info.stat.exists
