@@ -1,23 +1,24 @@
-- name: Desplegar Agente APM desde Git a Windows
-  hosts: all
+- name: Desplegar Agente APM a Windows
+  hosts: windows_servers  # Cambiado 'all' por un grupo específico (recomendado)
   gather_facts: no
   vars:
     destino_windows: 'C:\Tools\agente-apm'
+    # Asegúrate de que esta ruta exista en tu nodo de control (Linux)
+    archivo_origen: 'opentelemetry-javaagent.jar' 
+
   tasks:
     - name: 1. Crear directorio de destino en Windows
-      win_file:
+      ansible.windows.win_file:
         path: "{{ destino_windows }}"
         state: directory
 
-    - name: Copiar un archivo de configuración
+    - name: 2. Copiar agente APM
       ansible.windows.win_copy:
-        src: /opentelemetry-javaagent.jar  # Ruta en tu máquina de control Ansible
-        dest: C:\Tools\agente-apm # Ruta en el servidor Windows
-        # Se pueden añadir opciones como:
-        # backup: yes # Crea una copia de seguridad antes de sobrescribir
-        # force: yes # Fuerza la copia si el archivo es idéntico
+        src: "{{ archivo_origen }}"
+        dest: "{{ destino_windows }}\opentelemetry-javaagent.jar"
+        force: yes
       register: copy_result
 
-    - name: Mostrar resultado
-      debug:
+    - name: 3. Mostrar resultado
+      ansible.builtin.debug:
         var: copy_result
