@@ -14,9 +14,8 @@
     - name: 2. Copiar agente APM
       ansible.windows.win_copy:
         src: "{{ archivo_origen }}"
-        dest: "{{ destino_windows }}\opentelemetry-javaagent.jar"
+        dest: "{{ destino_windows }}/opentelemetry-javaagent.jar"
         force: yes
-      register: copy_result
 
     - name: 3. Mostrar resultado
       ansible.builtin.debug:
